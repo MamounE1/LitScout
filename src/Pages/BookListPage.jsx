@@ -12,11 +12,8 @@ export default function BookListPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [text, setText] = useState("")
   const [books, setBooks] = useState([])
-  const [favoriteBooks, setFavoriteBooks] = useState([])
   const [startIndex, setStartIndex] = useState(0);
-  const [showFavorites, setShowFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
-  const [loadingFavorites, setLoadingFavorites] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -33,33 +30,7 @@ export default function BookListPage() {
     }
   }
 
-  async function loadFavoriteBooks() {
-    if (!user || favorites.length === 0) {
-      setFavoriteBooks([]);
-      return;
-    }
-    
-    setLoadingFavorites(true);
-    try {
-      const bookPromises = favorites.map(bookId =>
-        fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`)
-          .then(res => res.json())
-          .catch(() => null)
-      );
-      const books = await Promise.all(bookPromises);
-      setFavoriteBooks(books.filter(book => book !== null));
-    } catch (err) {
-      console.error('Failed to load favorite books:', err);
-    } finally {
-      setLoadingFavorites(false);
-    }
-  }
 
-  useEffect(() => {
-    if (showFavorites) {
-      loadFavoriteBooks();
-    }
-  }, [showFavorites, favorites]);
 
   async function toggleFavorite(bookId) {
     if (!user) {
@@ -93,7 +64,7 @@ export default function BookListPage() {
   }, [startIndex, searchQuery])
 
   useEffect(() => {
-    if (showFavorites || !searchQuery) return;
+    if (!searchQuery) return;
 
     const observer = new IntersectionObserver(entries => {
       if(entries[0].isIntersecting){
@@ -106,10 +77,9 @@ export default function BookListPage() {
     }
 
     return () => observer.disconnect()
-  }, [showFavorites, searchQuery])
+  }, [searchQuery])
   
   function onSearch(){
-    setShowFavorites(false);
     setBooks([])
     setStartIndex(0)
     setSearchQuery(text.trim())
@@ -123,19 +93,13 @@ export default function BookListPage() {
         text={text} 
         setText={setText} 
         onSearch={onSearch}
-        showFavorites={showFavorites}
-        setShowFavorites={setShowFavorites}
       />
-      {loadingFavorites ? (
-        <p style={{ textAlign: 'center', marginTop: '2rem' }}>Loading favorites...</p>
-      ) : (
-        <BookList 
-          books={showFavorites ? favoriteBooks : books} 
-          loadMoreRef={loadMoreRef} 
-          favorites={favorites} 
-          toggleFavorite={toggleFavorite}
-        />
-      )}
+      <BookList 
+        books={books} 
+        loadMoreRef={loadMoreRef} 
+        favorites={favorites} 
+        toggleFavorite={toggleFavorite}
+      />
     </>
   )
 }

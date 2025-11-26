@@ -54,20 +54,25 @@ router.post('/register', [
   }
 });
 
-router.post('/login', 
-  passport.authenticate('local', { session: false }),
-  (req, res) => {
-    const token = generateToken(req.user);
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+    if (!user) {
+      return res.status(401).json({ error: info?.message || 'Invalid credentials' });
+    }
+    const token = generateToken(user);
     res.json({ 
       token, 
       user: { 
-        id: req.user.id, 
-        email: req.user.email, 
-        username: req.user.username 
+        id: user.id, 
+        email: user.email, 
+        username: user.username 
       } 
     });
-  }
-);
+  })(req, res, next);
+});
 
 router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'], session: false })

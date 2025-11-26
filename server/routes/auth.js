@@ -17,8 +17,8 @@ function generateToken(user) {
 }
 
 router.post('/register', [
-  body('email').isEmail().normalizeEmail(),
-  body('username').trim().isLength({ min: 3 }),
+  body('email').isEmail().trim().toLowerCase(),
+  body('username').trim().isLength({ min: 3 }).matches(/^[a-zA-Z0-9_]+$/),
   body('password').isLength({ min: 6 })
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -29,13 +29,22 @@ router.post('/register', [
   const { email, username, password } = req.body;
 
   try {
-    const existing = await pool.query(
-      'SELECT * FROM users WHERE email = $1 OR username = $2',
-      [email, username]
+    const emailCheck = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
     );
 
-    if (existing.rows.length > 0) {
-      return res.status(400).json({ error: 'Email or username already exists' });
+    if (emailCheck.rows.length > 0) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    const usernameCheck = await pool.query(
+      'SELECT * FROM users WHERE username = $1',
+      [username]
+    );
+
+    if (usernameCheck.rows.length > 0) {
+      return res.status(400).json({ error: 'Username already taken' });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);

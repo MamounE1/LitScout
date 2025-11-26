@@ -16,6 +16,21 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    
+    // Client-side validation
+    if (username.length < 3) {
+      setError('Username must be at least 3 characters');
+      return;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setError('Username can only contain letters, numbers, and underscores');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -44,7 +59,7 @@ export default function RegisterPage() {
             />
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Username (letters, numbers, _ only)"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -52,7 +67,7 @@ export default function RegisterPage() {
             />
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Password (min 6 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

@@ -1,16 +1,26 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Header.css"
 import LitScoutLogo from "../../images/LitScout.png";
 
 export default function Header(){
     const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    function handleLogoClick() {
+        navigate('/');
+        window.location.reload();
+    }
 
     return (
         <header>
-            <Link to="/">
-                <img className="title" src={LitScoutLogo} alt="LitScout Logo"/>
-            </Link>
+            <img 
+                className="title" 
+                src={LitScoutLogo} 
+                alt="LitScout Logo"
+                onClick={handleLogoClick}
+                style={{ cursor: 'pointer' }}
+            />
             <div className="authButtons">
                 {user ? (
                     <>

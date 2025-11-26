@@ -1,12 +1,51 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { getFavorites, addFavorite, removeFavorite } from "../utils/api";
+import Header from "../Components/Header/Header";
 import "./BookDetailsPage.css";
 
-export default function BookDetailsPage({ favorites, toggleFavorite }) {
+export default function BookDetailsPage() {
+    const { user, token } = useAuth();
     const { id } = useParams();
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [favorites, setFavorites] = useState([]);
+
+    useEffect(() => {
+        if (user && token) {
+            loadFavorites();
+        }
+    }, [user, token]);
+
+    async function loadFavorites() {
+        try {
+            const favs = await getFavorites(token);
+            setFavorites(favs);
+        } catch (err) {
+            console.error('Failed to load favorites:', err);
+        }
+    }
+
+    async function toggleFavorite(bookId) {
+        if (!user) {
+            alert('Please login to save favorites');
+            return;
+        }
+
+        try {
+            if (favorites.includes(bookId)) {
+                await removeFavorite(bookId, token);
+                setFavorites(prev => prev.filter(id => id !== bookId));
+            } else {
+                await addFavorite(bookId, token);
+                setFavorites(prev => [...prev, bookId]);
+            }
+        } catch (err) {
+            console.error('Failed to toggle favorite:', err);
+        }
+    }
 
     useEffect(() => {
         setLoading(true);
@@ -28,8 +67,10 @@ export default function BookDetailsPage({ favorites, toggleFavorite }) {
     const isFavorite = favorites.includes(book?.id)
 
     return (
-        <div className="bookDetailsContainer">
-            <div className="bookDetailsCard">
+        <>
+            <Header />
+            <div className="bookDetailsContainer">
+                <div className="bookDetailsCard">
                 <div className="mainInfoWrapper">
                     <div className="img&HeartWrapper">
 
@@ -71,5 +112,6 @@ export default function BookDetailsPage({ favorites, toggleFavorite }) {
                 </div>
             </div>
         </div>
+        </>
     )
 }

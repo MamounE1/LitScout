@@ -1,12 +1,61 @@
 header{
     background-color: #0d0d29;
     color: #373F51;
-    text-align: center;
-    padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
 }
 
 .title{
     width: 5rem;
+    cursor: pointer;
+}
+
+.authButtons {
     display: flex;
-    padding-left: 6rem;
+    gap: 10px;
+    align-items: center;
+}
+
+.username {
+    color: white;
+    margin-right: 10px;
+}
+
+.loginBtn, .signupBtn, .logoutBtn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.loginBtn {
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+}
+
+.loginBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.signupBtn {
+    background: #2196F3;
+    color: white;
+}
+
+.signupBtn:hover {
+    background: #1976D2;
+}
+
+.logoutBtn {
+    background: #f44336;
+    color: white;
+}
+
+.logoutBtn:hover {
+    background: #da190b;
 }

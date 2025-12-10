@@ -48,18 +48,18 @@ export default function RegisterPage() {
       <Header />
       <div className="authContainer">
         <div className="authCard">
-          <h2>Sign Up</h2>
+          <h2>Create Account</h2>
           <form onSubmit={handleSubmit}>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
             <input
               type="text"
-              placeholder="Username (letters, numbers, _ only)"
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required

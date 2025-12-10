@@ -32,11 +32,11 @@ export default function LoginPage() {
       <Header />
       <div className="authContainer">
         <div className="authCard">
-          <h2>Login</h2>
+          <h2>Welcome Back</h2>
           <form onSubmit={handleSubmit}>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

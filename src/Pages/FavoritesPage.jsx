@@ -55,8 +55,20 @@ export default function FavoritesPage() {
     return (
       <>
         <Header />
-        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-          <h2>Please login to view your favorites</h2>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center',
+          minHeight: '60vh',
+          fontFamily: 'Inter, sans-serif'
+        }}>
+          <h2 style={{ 
+            fontSize: '2rem',
+            fontWeight: '600',
+            color: '#2d3748',
+            marginBottom: '1rem'
+          }}>Please login to view your favorites</h2>
         </div>
       </>
     );
@@ -66,8 +78,16 @@ export default function FavoritesPage() {
     return (
       <>
         <Header />
-        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-          <p>Loading favorites...</p>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          minHeight: '60vh',
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '1.25rem',
+          color: '#718096'
+        }}>
+          <p>Loading your favorites...</p>
         </div>
       </>
     );
@@ -76,12 +96,50 @@ export default function FavoritesPage() {
   return (
     <>
       <Header />
-      <div style={{ padding: '2rem' }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>My Favorites</h1>
-        {favoriteBooks.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#666' }}>
-            No favorites yet. Search for books and add them to your favorites!
+      <div style={{ 
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '3rem 2rem'
+      }}>
+        <div style={{
+          marginBottom: '3rem',
+          textAlign: 'center'
+        }}>
+          <h1 style={{ 
+            fontSize: '3rem',
+            fontWeight: '700',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            marginBottom: '0.5rem',
+            fontFamily: 'Inter, sans-serif'
+          }}>My Favorites</h1>
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#718096',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            {favoriteBooks.length} {favoriteBooks.length === 1 ? 'book' : 'books'} saved
           </p>
+        </div>
+        {favoriteBooks.length === 0 ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '4rem 2rem',
+            background: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+          }}>
+            <p style={{ 
+              fontSize: '1.25rem',
+              color: '#718096',
+              fontFamily: 'Inter, sans-serif',
+              margin: 0
+            }}>
+              No favorites yet. Search for books and add them to your collection!
+            </p>
+          </div>
         ) : (
           <div className="allBooksContainer">
             {favoriteBooks.map((book) => (

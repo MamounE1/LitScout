@@ -56,25 +56,3 @@
     border-color: #667eea;
     box-shadow: 0 4px 24px rgba(102, 126, 234, 0.25);
 }
-
-.favBtn{
-    cursor: pointer;
-    color: #a9bcd0;
-    background-color: white;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 400;
-    font-style: italic;
-    padding: 0.75rem 2.5rem;
-    border: none;
-    border-radius: 0.5rem;
-    box-sizing: border-box;
-    box-shadow: 0 0 10px rgba(105, 105, 105, 0.3);
-}
-
-.favBtn:hover {
-    outline: none;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    transition: transform 0.4s ease, box-shadow 0.2s ease;
-}

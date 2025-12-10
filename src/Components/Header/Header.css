@@ -1,12 +1,112 @@
 header{
     background-color: #0d0d29;
     color: #373F51;
-    text-align: center;
-    padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
 }
 
 .title{
     width: 5rem;
+    cursor: pointer;
+}
+
+.authButtons {
     display: flex;
-    padding-left: 6rem;
+    gap: 10px;
+    align-items: center;
+}
+
+.userMenu {
+    position: relative;
+}
+
+.username {
+    color: white;
+    cursor: pointer;
+    padding: 8px 12px;
+    user-select: none;
+}
+
+.username:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 150px;
+    z-index: 1000;
+}
+
+.dropdown a,
+.dropdown button {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+    border: none;
+    background: none;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown a:hover,
+.dropdown button:hover {
+    background: #f5f5f5;
+}
+
+.dropdown a:first-child {
+    border-radius: 4px 4px 0 0;
+}
+
+.dropdown button:last-child {
+    border-radius: 0 0 4px 4px;
+    color: #f44336;
+}
+
+.loginBtn, .signupBtn, .logoutBtn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.loginBtn {
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+}
+
+.loginBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.signupBtn {
+    background: #2196F3;
+    color: white;
+}
+
+.signupBtn:hover {
+    background: #1976D2;
+}
+
+.logoutBtn {
+    background: #f44336;
+    color: white;
+}
+
+.logoutBtn:hover {
+    background: #da190b;
 }

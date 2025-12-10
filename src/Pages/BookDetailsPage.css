@@ -1,26 +1,234 @@
-.bookDetailsCard{
+.loadingContainer {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    margin: 10rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    color: hsl(210, 20%, 60%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.mainInfoWrapper{
+.loadingText {
+    flex: 1;
     display: flex;
-    gap: 4rem;
-    padding: 2rem 4rem;
-    background-color: white;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    font-family: 'Inter', sans-serif;
 }
 
-.extraInfo{
-    margin-top: 3rem;
-    padding: 2rem 4rem;
-    width: 10rem;
-    background-color: white;
+.bookDetailsContainer {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 1rem;
 }
 
-.bookImage{
-    width: 10rem;
+.bookDetailsHero {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 3rem;
+    padding: 3rem;
+}
+
+.bookCoverSection {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.bookCover {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.bookCover:hover {
+    transform: scale(1.02);
+}
+
+.bookInfoSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.bookHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.bookTitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+}
+
+.bookAuthors {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.25rem;
+    color: #667eea;
+    font-weight: 500;
+    margin: 0;
+}
+
+.favoriteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favoriteButton:hover {
+    background: #f7fafc;
+    transform: scale(1.1);
+}
+
+.heartIcon {
+    transition: all 0.2s ease;
+}
+
+.bookMeta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.metaBadge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
+
+.metaItem {
+    color: #718096;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.metaItem:not(:last-child)::after {
+    content: "•";
+    margin-left: 1rem;
+    color: #cbd5e0;
+}
+
+.descriptionSection {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 2rem;
+}
+
+.sectionTitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 1rem 0;
+}
+
+.bookDescription {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #4a5568;
+    margin: 0;
+}
+
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.detailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detailLabel {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.detailValue {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+@media (max-width: 968px) {
+    .bookDetailsHero {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 2rem;
+    }
+
+    .bookCoverSection {
+        justify-content: center;
+    }
+
+    .bookCover {
+        max-width: 250px;
+    }
+
+    .bookTitle {
+        font-size: 2rem;
+    }
+
+    .detailsGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .bookDetailsContainer {
+        padding: 1rem 0.5rem;
+    }
+
+    .bookDetailsHero {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    .bookTitle {
+        font-size: 1.75rem;
+    }
+
+    .bookAuthors {
+        font-size: 1.1rem;
+    }
+
+    .detailsGrid {
+        grid-template-columns: 1fr;
+    }
 }

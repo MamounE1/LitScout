@@ -1,11 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
+import { Moon, Sun } from "lucide-react";
 import "./Header.css"
 import LitScoutLogo from "../../images/LitScoutLogo.svg";
 
 export default function Header(){
     const { user, logout } = useAuth();
+    const { isDark, toggleTheme } = useTheme();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -30,6 +33,13 @@ export default function Header(){
                 style={{ cursor: 'pointer' }}
             />
             <div className="authButtons">
+                <button 
+                    className="themeToggle"
+                    onClick={toggleTheme}
+                    aria-label="Toggle theme"
+                >
+                    {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
                 {user ? (
                     <div className="userMenu">
                         <span 

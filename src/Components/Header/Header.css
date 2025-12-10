@@ -1,6 +1,6 @@
 header{
-    background: white;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    background: var(--header-bg);
+    box-shadow: 0 2px 12px var(--header-shadow);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -9,6 +9,7 @@ header{
     position: sticky;
     top: 0;
     z-index: 100;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .title{
@@ -26,6 +27,27 @@ header{
     display: flex;
     gap: 12px;
     align-items: center;
+}
+
+.themeToggle {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.themeToggle:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .userMenu {
@@ -53,9 +75,9 @@ header{
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    background: white;
+    background: var(--card-bg);
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 32px var(--shadow);
     min-width: 180px;
     z-index: 1000;
     overflow: hidden;
@@ -81,7 +103,7 @@ header{
     text-align: left;
     border: none;
     background: none;
-    color: #2d3748;
+    color: var(--text-primary);
     text-decoration: none;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -98,7 +120,7 @@ header{
 
 .dropdown button:last-child {
     color: #ef4444;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--border-color);
 }
 
 .dropdown button:last-child:hover {

@@ -14,7 +14,7 @@
 }
 
 .searchBar{
-    color: #2d3748;
+    color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
     width: 100%;
@@ -23,8 +23,8 @@
     border: 2px solid transparent;
     border-radius: 12px;
     box-sizing: border-box;
-    background: white;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: var(--card-bg);
+    box-shadow: 0 4px 20px var(--shadow);
     transition: all 0.3s ease;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .searchBar::placeholder {
-    color: #a0aec0;       
+    color: var(--text-muted);       
     font-style: normal;
     font-weight: 400;
 }

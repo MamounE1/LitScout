@@ -9,10 +9,16 @@ import "../index.css"
 export default function BookListPage() {
   const { user, token } = useAuth();
   const loadMoreRef = useRef(null);
-  const [searchQuery, setSearchQuery] = useState("")
-  const [text, setText] = useState("")
-  const [books, setBooks] = useState([])
-  const [startIndex, setStartIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('searchQuery') || "")
+  const [text, setText] = useState(() => sessionStorage.getItem('searchQuery') || "")
+  const [books, setBooks] = useState(() => {
+    const cached = sessionStorage.getItem('cachedBooks');
+    return cached ? JSON.parse(cached) : [];
+  })
+  const [startIndex, setStartIndex] = useState(() => {
+    const cached = sessionStorage.getItem('startIndex');
+    return cached ? parseInt(cached, 10) : 0;
+  });
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
@@ -54,12 +60,30 @@ export default function BookListPage() {
   useEffect(() => {
     if (!searchQuery) {
       setBooks([]);
+      sessionStorage.removeItem('cachedBooks');
+      sessionStorage.removeItem('startIndex');
       return;
     }
+    
+    // Check if we already have books cached for this query and startIndex
+    const cachedQuery = sessionStorage.getItem('searchQuery');
+    const cachedBooks = sessionStorage.getItem('cachedBooks');
+    const cachedIndex = sessionStorage.getItem('startIndex');
+    
+    if (cachedQuery === searchQuery && cachedBooks && parseInt(cachedIndex, 10) === startIndex) {
+      // Already have the data cached, no need to fetch
+      return;
+    }
+    
     fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}&startIndex=${startIndex}&maxResults=10`)
       .then(res => res.json())
       .then(data => {
-        setBooks(prev => [...prev, ...(data.items || [])])
+        setBooks(prev => {
+          const updated = [...prev, ...(data.items || [])];
+          sessionStorage.setItem('cachedBooks', JSON.stringify(updated));
+          sessionStorage.setItem('startIndex', startIndex.toString());
+          return updated;
+        })
       })
   }, [startIndex, searchQuery])
 
@@ -80,10 +104,13 @@ export default function BookListPage() {
   }, [searchQuery])
   
   function onSearch(){
+    const trimmedText = text.trim();
     setBooks([])
     setStartIndex(0)
-    setSearchQuery(text.trim())
-    setText("")
+    setSearchQuery(trimmedText)
+    sessionStorage.setItem('searchQuery', trimmedText);
+    sessionStorage.removeItem('cachedBooks');
+    sessionStorage.removeItem('startIndex');
   }
 
   return (

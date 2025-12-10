@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import "./Header.css"
-import LitScoutLogo from "../../images/LitScout.png";
+import LitScoutLogo from "../../images/LitScoutLogo.svg";
 
 export default function Header(){
     const { user, logout } = useAuth();

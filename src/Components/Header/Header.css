@@ -12,7 +12,8 @@ header{
 }
 
 .title{
-    width: 5rem;
+    height: 3rem;
+    width: auto;
     cursor: pointer;
     transition: transform 0.2s ease;
 }

@@ -4,6 +4,7 @@ import { getFavorites, addFavorite, removeFavorite } from "../utils/api"
 import Header from "../Components/Header/Header.jsx"
 import SearchBar from "../Components/SearchBar/SearchBar.jsx"
 import BookList from "../Components/BookList/BookList.jsx"
+import Filters from "../Components/Filters/Filters.jsx"
 import "../index.css"
 
 export default function BookListPage() {
@@ -20,6 +21,12 @@ export default function BookListPage() {
     return cached ? parseInt(cached, 10) : 0;
   });
   const [favorites, setFavorites] = useState([]);
+  const [filters, setFilters] = useState({
+    category: 'all',
+    language: 'all',
+    sortBy: 'relevance',
+    printType: 'all'
+  });
 
   useEffect(() => {
     if (user && token) {
@@ -75,7 +82,34 @@ export default function BookListPage() {
       return;
     }
     
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}&startIndex=${startIndex}&maxResults=10`)
+    // Build API URL with filters
+    let apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}`;
+    
+    // Add category filter
+    if (filters.category !== 'all') {
+      apiUrl += `+subject:${filters.category}`;
+    }
+    
+    // Add language filter
+    if (filters.language !== 'all') {
+      apiUrl += `&langRestrict=${filters.language}`;
+    }
+    
+    // Add sort order
+    if (filters.sortBy === 'newest') {
+      apiUrl += `&orderBy=newest`;
+    } else {
+      apiUrl += `&orderBy=relevance`;
+    }
+    
+    // Add print type
+    if (filters.printType !== 'all') {
+      apiUrl += `&printType=${filters.printType}`;
+    }
+    
+    apiUrl += `&startIndex=${startIndex}&maxResults=10`;
+    
+    fetch(apiUrl)
       .then(res => res.json())
       .then(data => {
         setBooks(prev => {
@@ -85,7 +119,7 @@ export default function BookListPage() {
           return updated;
         })
       })
-  }, [startIndex, searchQuery])
+  }, [startIndex, searchQuery, filters])
 
   useEffect(() => {
     if (!searchQuery) return;
@@ -113,6 +147,27 @@ export default function BookListPage() {
     sessionStorage.removeItem('startIndex');
   }
 
+  function handleFilterChange(filterName, value) {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+    setBooks([]);
+    setStartIndex(0);
+    sessionStorage.removeItem('cachedBooks');
+    sessionStorage.removeItem('startIndex');
+  }
+
+  function handleClearFilters() {
+    setFilters({
+      category: 'all',
+      language: 'all',
+      sortBy: 'relevance',
+      printType: 'all'
+    });
+    setBooks([]);
+    setStartIndex(0);
+    sessionStorage.removeItem('cachedBooks');
+    sessionStorage.removeItem('startIndex');
+  }
+
   return (
     <>
       <Header />
@@ -121,6 +176,13 @@ export default function BookListPage() {
         setText={setText} 
         onSearch={onSearch}
       />
+      {searchQuery && (
+        <Filters 
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
+      )}
       <BookList 
         books={books} 
         loadMoreRef={loadMoreRef} 

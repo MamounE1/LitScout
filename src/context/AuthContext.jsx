@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   async function fetchUser() {
-    const API_URL = import.meta.env.VITE_API_URL || 'https://litscout-production.up.railway.app';
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     try {
       const res = await fetch(`${API_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password) {
-    const API_URL = import.meta.env.VITE_API_URL || 'https://litscout-production.up.railway.app';
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
   }
 
   async function register(email, username, password) {
-    const API_URL = import.meta.env.VITE_API_URL || 'https://litscout-production.up.railway.app';
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     const res = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

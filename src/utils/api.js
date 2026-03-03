@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://litscout-production.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export async function getFavorites(token) {
   const res = await fetch(`${API_URL}/favorites`, {

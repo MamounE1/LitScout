@@ -1,8 +1,10 @@
 import { SlidersHorizontal } from "lucide-react";
+import { DEFAULT_FILTERS } from "./defaultFilters";
 import "./Filters.css";
 
 export default function Filters({ filters, onFilterChange, onClearFilters }) {
-  const activeFiltersCount = Object.values(filters).filter(v => v !== 'all').length;
+  const activeFiltersCount = Object.keys(DEFAULT_FILTERS)
+    .filter(key => filters[key] !== DEFAULT_FILTERS[key]).length;
 
   return (
     <div className="filtersContainer">
@@ -72,19 +74,6 @@ export default function Filters({ filters, onFilterChange, onClearFilters }) {
             >
               <option value="relevance">Relevance</option>
               <option value="newest">Newest First</option>
-            </select>
-          </div>
-
-          <div className="filterGroup">
-            <label className="filterLabel">Print Type</label>
-            <select
-              className="filterSelect"
-              value={filters.printType}
-              onChange={(e) => onFilterChange('printType', e.target.value)}
-            >
-              <option value="all">All Types</option>
-              <option value="books">Books</option>
-              <option value="magazines">Magazines</option>
             </select>
           </div>
         </div>

@@ -7,15 +7,17 @@ export default function BookCard({book, isFavorite, toggleFavorite}){
         <div className="bookContainer">
             <Heart
                 className="heartIcon"
-                onClick={() => toggleFavorite(book.id)}
+                onClick={() => toggleFavorite(book)}
                 style={{ fill: isFavorite ? "red" : "none" }}
             />
             <div className="imageWrapper">
-                {book.volumeInfo.imageLinks?.thumbnail ? (
-                    <Link to={`/book/${book.id}`}>
+                <Link to={`/book/${book.id}`}>
+                    {book.volumeInfo.imageLinks?.thumbnail ? (
                         <img className="imgStyle" src={book.volumeInfo.imageLinks.thumbnail} alt={book.volumeInfo.title}></img>
-                    </Link>
-                ) : null}
+                    ) : (
+                        <div className="imgPlaceholder">No Cover Available</div>
+                    )}
+                </Link>
             </div>
             <div className="infoWrapper">
                 <Link to={`/book/${book.id}`}>

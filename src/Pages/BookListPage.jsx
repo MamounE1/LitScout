@@ -1,14 +1,27 @@
 import { useState, useEffect, useRef } from "react"
-import { useAuth } from "../context/AuthContext"
-import { getFavorites, addFavorite, removeFavorite } from "../utils/api"
+import { useFavorites } from "../context/FavoritesContext"
+import { normalizeBook, toOpenLibraryLanguage, SEARCH_FIELDS } from "../utils/openLibrary"
 import Header from "../Components/Header/Header.jsx"
 import SearchBar from "../Components/SearchBar/SearchBar.jsx"
 import BookList from "../Components/BookList/BookList.jsx"
 import Filters from "../Components/Filters/Filters.jsx"
+import { DEFAULT_FILTERS } from "../Components/Filters/defaultFilters"
 import "../index.css"
 
+// A hard reload (e.g. the logo click, or the user refreshing the page) should
+// start with a clean search, unlike SPA navigation (e.g. back from a book's
+// detail page), which should keep the cached search results.
+const isHardReload = typeof performance !== 'undefined' &&
+  performance.getEntriesByType('navigation')[0]?.type === 'reload';
+
+if (isHardReload) {
+  sessionStorage.removeItem('searchQuery');
+  sessionStorage.removeItem('cachedBooks');
+  sessionStorage.removeItem('startIndex');
+}
+
 export default function BookListPage() {
-  const { user, token } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const loadMoreRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState(() => sessionStorage.getItem('searchQuery') || "")
   const [text, setText] = useState(() => sessionStorage.getItem('searchQuery') || "")
@@ -20,49 +33,7 @@ export default function BookListPage() {
     const cached = sessionStorage.getItem('startIndex');
     return cached ? parseInt(cached, 10) : 0;
   });
-  const [favorites, setFavorites] = useState([]);
-  const [filters, setFilters] = useState({
-    category: 'all',
-    language: 'all',
-    sortBy: 'relevance',
-    printType: 'all'
-  });
-
-  useEffect(() => {
-    if (user && token) {
-      loadFavorites();
-    }
-  }, [user, token]);
-
-  async function loadFavorites() {
-    try {
-      const favs = await getFavorites(token);
-      setFavorites(favs);
-    } catch (err) {
-      console.error('Failed to load favorites:', err);
-    }
-  }
-
-
-
-  async function toggleFavorite(bookId) {
-    if (!user) {
-      alert('Please login to save favorites');
-      return;
-    }
-
-    try {
-      if (favorites.includes(bookId)) {
-        await removeFavorite(bookId, token);
-        setFavorites(prev => prev.filter(id => id !== bookId));
-      } else {
-        await addFavorite(bookId, token);
-        setFavorites(prev => [...prev, bookId]);
-      }
-    } catch (err) {
-      console.error('Failed to toggle favorite:', err);
-    }
-  }
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
   useEffect(() => {
     if (!searchQuery) {
@@ -82,38 +53,37 @@ export default function BookListPage() {
       return;
     }
     
-    // Build API URL with filters
-    let apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}`;
-    
+    // Build API URL with filters (Open Library search API)
+    let q = searchQuery;
+
     // Add category filter
     if (filters.category !== 'all') {
-      apiUrl += `+subject:${filters.category}`;
+      q += ` subject:${filters.category}`;
     }
-    
+
+    const params = new URLSearchParams({
+      q,
+      offset: startIndex,
+      limit: 10,
+      fields: SEARCH_FIELDS
+    });
+
     // Add language filter
     if (filters.language !== 'all') {
-      apiUrl += `&langRestrict=${filters.language}`;
+      params.set('language', toOpenLibraryLanguage(filters.language));
     }
-    
+
     // Add sort order
     if (filters.sortBy === 'newest') {
-      apiUrl += `&orderBy=newest`;
-    } else {
-      apiUrl += `&orderBy=relevance`;
+      params.set('sort', 'new');
     }
-    
-    // Add print type
-    if (filters.printType !== 'all') {
-      apiUrl += `&printType=${filters.printType}`;
-    }
-    
-    apiUrl += `&startIndex=${startIndex}&maxResults=10`;
-    
-    fetch(apiUrl)
+
+    fetch(`https://openlibrary.org/search.json?${params.toString()}`)
       .then(res => res.json())
       .then(data => {
+        const newBooks = (data.docs || []).map(doc => normalizeBook(doc));
         setBooks(prev => {
-          const updated = [...prev, ...(data.items || [])];
+          const updated = [...prev, ...newBooks];
           sessionStorage.setItem('cachedBooks', JSON.stringify(updated));
           sessionStorage.setItem('startIndex', startIndex.toString());
           return updated;
@@ -156,12 +126,7 @@ export default function BookListPage() {
   }
 
   function handleClearFilters() {
-    setFilters({
-      category: 'all',
-      language: 'all',
-      sortBy: 'relevance',
-      printType: 'all'
-    });
+    setFilters(DEFAULT_FILTERS);
     setBooks([]);
     setStartIndex(0);
     sessionStorage.removeItem('cachedBooks');
@@ -183,10 +148,10 @@ export default function BookListPage() {
           onClearFilters={handleClearFilters}
         />
       )}
-      <BookList 
-        books={books} 
-        loadMoreRef={loadMoreRef} 
-        favorites={favorites} 
+      <BookList
+        books={books}
+        loadMoreRef={loadMoreRef}
+        isFavorite={isFavorite}
         toggleFavorite={toggleFavorite}
       />
     </>

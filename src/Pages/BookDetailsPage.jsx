@@ -1,59 +1,41 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Heart } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
-import { getFavorites, addFavorite, removeFavorite } from "../utils/api";
+import { useFavorites } from "../context/FavoritesContext";
+import { normalizeBook, SEARCH_FIELDS } from "../utils/openLibrary";
 import Header from "../Components/Header/Header";
 import "./BookDetailsPage.css";
 
 export default function BookDetailsPage() {
-    const { user, token } = useAuth();
+    const { isFavorite, toggleFavorite } = useFavorites();
     const { id } = useParams();
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [favorites, setFavorites] = useState([]);
-
-    useEffect(() => {
-        if (user && token) {
-            loadFavorites();
-        }
-    }, [user, token]);
-
-    async function loadFavorites() {
-        try {
-            const favs = await getFavorites(token);
-            setFavorites(favs);
-        } catch (err) {
-            console.error('Failed to load favorites:', err);
-        }
-    }
-
-    async function toggleFavorite(bookId) {
-        if (!user) {
-            alert('Please login to save favorites');
-            return;
-        }
-
-        try {
-            if (favorites.includes(bookId)) {
-                await removeFavorite(bookId, token);
-                setFavorites(prev => prev.filter(id => id !== bookId));
-            } else {
-                await addFavorite(bookId, token);
-                setFavorites(prev => [...prev, bookId]);
-            }
-        } catch (err) {
-            console.error('Failed to toggle favorite:', err);
-        }
-    }
 
     useEffect(() => {
         setLoading(true);
-        fetch(`https://www.googleapis.com/books/v1/volumes/${id}`)
-            .then(res => res.json())
-            .then(data => {
-                setBook(data)
-                setLoading(false)
+        const searchParams = new URLSearchParams({
+            q: `key:/works/${id}`,
+            fields: SEARCH_FIELDS
+        });
+        Promise.all([
+            fetch(`https://openlibrary.org/search.json?${searchParams.toString()}`).then(res => res.json()),
+            fetch(`https://openlibrary.org/works/${id}.json`).then(res => res.json())
+        ])
+            .then(([searchData, workData]) => {
+                const doc = searchData.docs?.[0];
+                if (!doc) {
+                    setBook(null);
+                    setLoading(false);
+                    return;
+                }
+                const normalized = normalizeBook(doc, 'L');
+                normalized.volumeInfo.description =
+                    typeof workData.description === 'string'
+                        ? workData.description
+                        : workData.description?.value || '';
+                setBook(normalized);
+                setLoading(false);
             })
             .catch(err => {
                 console.error("Error fetching book:", err);
@@ -74,8 +56,8 @@ export default function BookDetailsPage() {
         </div>
     );
 
-    const isFavorite = favorites.includes(book?.id);
-    
+    const favorited = isFavorite(book?.id);
+
     // Strip HTML tags from description
     const stripHtml = (html) => {
         if (!html) return '';
@@ -109,17 +91,17 @@ export default function BookDetailsPage() {
                                     <p className="bookAuthors">by {book.volumeInfo.authors.join(", ")}</p>
                                 )}
                             </div>
-                            <button 
+                            <button
                                 className="favoriteButton"
-                                onClick={() => toggleFavorite(book.id)}
-                                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                                onClick={() => toggleFavorite(book)}
+                                aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
                             >
                                 <Heart
                                     size={28}
                                     className="heartIcon"
-                                    style={{ 
-                                        fill: isFavorite ? "#ef4444" : "none",
-                                        stroke: isFavorite ? "#ef4444" : "currentColor"
+                                    style={{
+                                        fill: favorited ? "#ef4444" : "none",
+                                        stroke: favorited ? "#ef4444" : "currentColor"
                                     }}
                                 />
                             </button>

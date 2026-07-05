@@ -13,6 +13,7 @@ Check out the live app [LitScout Live Demo](https://litscout.netlify.app/)!
 - **Search Books:** Users can search for books by title, author, or keyword, with results fetched dynamically from the Google Books API.
 - **Infinite Scroll:** Automatically loads more books as users scroll, providing a smooth browsing experience without manual pagination.
 - **Book Cards:** Displays detailed book information (title, author(s), thumbnail, and description) in reusable, responsive components.
+- **Favorites:** Save books to a favorites list, stored locally in your browser — no account required.
 
 ---
 
@@ -29,8 +30,6 @@ Check out the live app [LitScout Live Demo](https://litscout.netlify.app/)!
 ## Future Improvements
 
 - **Filter & Sorting Options:** Allow users to filter by category, language, or publication date, and sort results.
-- **Favorites & User Accounts:** Add the ability for users to save favorite books with authentication.
-- **Backend Integration:** Introduce a server to manage saved books, caching, and API requests securely.
 - **Responsive Design Enhancements:** Improve layout and styling for smaller screens and various devices, ensuring consistent usability.
 
 ---

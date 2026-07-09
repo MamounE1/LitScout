@@ -4,9 +4,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes.auth import router as auth_router
+from api.routes.favorites import router as favorites_router
 from core.config import settings
 from db.session import Base, engine
-from models import user  # noqa: F401  (ensures the model is registered before create_all)
+from models import favorite, user  # noqa: F401  (ensures the models are registered before create_all)
 
 
 @asynccontextmanager
@@ -26,6 +27,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(favorites_router)
 
 
 @app.get("/health")

@@ -1,13 +1,25 @@
 import "./BookCard.css"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react"
+import { useAuth } from "../../context/AuthContext";
 
 export default function BookCard({book, isFavorite, toggleFavorite}){
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    function handleHeartClick() {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        toggleFavorite(book);
+    }
+
     return (
         <div className="bookContainer">
             <Heart
                 className="heartIcon"
-                onClick={() => toggleFavorite(book)}
+                onClick={handleHeartClick}
                 style={{ fill: isFavorite ? "red" : "none" }}
             />
             <div className="imageWrapper">

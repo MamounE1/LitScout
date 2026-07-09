@@ -1,10 +1,13 @@
+import { Link } from "react-router-dom";
 import { useFavorites } from "../context/FavoritesContext";
+import { useAuth } from "../context/AuthContext";
 import Header from "../Components/Header/Header";
 import BookCard from "../Components/BookCard/BookCard";
 import "../index.css";
 
 export default function FavoritesPage() {
   const { favorites, toggleFavorite } = useFavorites();
+  const { user } = useAuth();
 
   return (
     <>
@@ -28,15 +31,47 @@ export default function FavoritesPage() {
             marginBottom: '0.5rem',
             fontFamily: 'Inter, sans-serif'
           }}>My Favorites</h1>
-          <p style={{
-            fontSize: '1.1rem',
-            color: 'var(--text-secondary)',
-            fontFamily: 'Inter, sans-serif'
-          }}>
-            {favorites.length} {favorites.length === 1 ? 'book' : 'books'} saved
-          </p>
+          {user && (
+            <p style={{
+              fontSize: '1.1rem',
+              color: 'var(--text-secondary)',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              {favorites.length} {favorites.length === 1 ? 'book' : 'books'} saved
+            </p>
+          )}
         </div>
-        {favorites.length === 0 ? (
+        {!user ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '4rem 2rem',
+            background: 'var(--card-bg)',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px var(--shadow)'
+          }}>
+            <p style={{
+              fontSize: '1.25rem',
+              color: 'var(--text-secondary)',
+              fontFamily: 'Inter, sans-serif',
+              margin: 0
+            }}>
+              Sign in to save and view your favorite books.
+            </p>
+            <Link to="/login" style={{
+              display: 'inline-block',
+              marginTop: '1.5rem',
+              padding: '0.75rem 2rem',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif',
+              textDecoration: 'none'
+            }}>
+              Sign In
+            </Link>
+          </div>
+        ) : favorites.length === 0 ? (
           <div style={{
             textAlign: 'center',
             padding: '4rem 2rem',

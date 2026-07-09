@@ -1,31 +1,72 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 const FavoritesContext = createContext();
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+function toBook(row) {
+  return {
+    id: row.book_id,
+    volumeInfo: {
+      title: row.title,
+      authors: row.authors ?? undefined,
+      imageLinks: row.cover_url ? { thumbnail: row.cover_url } : undefined,
+    },
+  };
+}
+
+function toPayload(book) {
+  return {
+    book_id: book.id,
+    title: book.volumeInfo.title,
+    authors: book.volumeInfo.authors ?? null,
+    cover_url: book.volumeInfo.imageLinks?.thumbnail ?? null,
+  };
+}
+
 export function FavoritesProvider({ children }) {
-  const [favorites, setFavorites] = useState(() => {
-    try {
-      const saved = localStorage.getItem('favorites');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { user, token } = useAuth();
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    if (!user || !token) {
+      setFavorites([]);
+      return;
+    }
+
+    (async () => {
+      const res = await fetch(`${API_URL}/favorites`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setFavorites((await res.json()).map(toBook));
+      }
+    })();
+  }, [user, token]);
 
   function isFavorite(bookId) {
-    return favorites.some(book => book.id === bookId);
+    return favorites.some((book) => book.id === bookId);
   }
 
-  function toggleFavorite(book) {
-    setFavorites(prev =>
-      prev.some(b => b.id === book.id)
-        ? prev.filter(b => b.id !== book.id)
-        : [...prev, book]
-    );
+  async function toggleFavorite(book) {
+    if (!user || !token) return;
+
+    const already = isFavorite(book.id);
+    if (already) {
+      setFavorites((prev) => prev.filter((b) => b.id !== book.id));
+      await fetch(`${API_URL}/favorites/${book.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else {
+      setFavorites((prev) => [...prev, book]);
+      await fetch(`${API_URL}/favorites`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(toPayload(book)),
+      });
+    }
   }
 
   return (

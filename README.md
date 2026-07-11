@@ -14,7 +14,7 @@ Check out the live app [LitScout Live Demo](https://litscout.netlify.app/)!
 - **Filters:** Narrow results by category and language, or sort by relevance/newest.
 - **Infinite Scroll:** Automatically loads more books as users scroll, providing a smooth browsing experience without manual pagination.
 - **Book Cards:** Displays detailed book information (title, author(s), thumbnail, and description) in reusable, responsive components.
-- **Favorites:** Save books to a favorites list, stored locally in your browser.
+- **Favorites:** Save books to a favorites list that's persisted in the database and tied to your account, so it syncs across devices and browser sessions. Signing in loads your saved favorites automatically.
 - **Accounts:** Sign up and sign in with a name, email, and password. Sessions persist across page reloads.
 
 ---
@@ -29,26 +29,6 @@ LitScout/
 └── backend/    # FastAPI + SQLAlchemy API, backed by Supabase Postgres
 ```
 
-### Running locally
-
-**Backend** (from `backend/`):
-```bash
-python -m venv .venv
-.venv/Scripts/activate        # Windows;  source .venv/bin/activate on macOS/Linux
-pip install -r requirements.txt
-cp .env.example .env          # then fill in your Supabase pooler URL + JWT secret
-uvicorn main:app --reload --port 8000
-```
-
-**Frontend** (from `frontend/`):
-```bash
-npm install
-# create frontend/.env with: VITE_API_URL=http://localhost:8000
-npm run dev
-```
-
----
-
 ## Technologies
 
 - **Frontend:** React, Vite, React Router, JavaScript, HTML5 / CSS3, Netlify
@@ -59,7 +39,6 @@ npm run dev
 
 ## Future Improvements
 
-- **Favorites Sync:** Persist favorites to the backend so they sync across devices (currently local-only).
 - **User Profiles:** Let users customize a profile.
 - **Custom Lists:** Allow users to create multiple lists beyond a single favorites collection.
 - **Social Login:** Add Google / OAuth sign-in.
